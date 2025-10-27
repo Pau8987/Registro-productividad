@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-MDIzZGMtYjA5NS0zMmRiZDY3YTM4ZTIi">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Tareas</title>
+    </head>
+<body>
+
+    <h1>Registro de Tareas de Operarios</h1>
+
+    <form id="registroForm">
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" required>
+
+        <label for="fecha">Fecha:</label>
+        <input type="date" id="fecha" readonly>
+
+        <label for="horaInicio">Hora Inicio:</label>
+        <input type="time" id="horaInicio" required>
+
+        <label for="horaFin">Hora Fin:</label>
+        <input type="time" id="horaFin" required>
+
+        <hr>
+
+        <h3>Añadir Productos/Tareas</h3>
+        
+        <label for="categoria">Categoría:</label>
+        <select id="categoria">
+            <option value="">-- Selecciona una categoría --</option>
+            </select>
+
+        <label for="producto">Producto/Tarea:</label>
+        <select id="producto">
+            <option value="">--</option>
+            </select>
+        
+        <button type="button" id="btnAddProducto">[ + ] Añadir a la lista</button>
+
+        <h3>Productos a Enviar:</h3>
+        <ul id="listaProductosEnviados">
+            </ul>
+
+        <hr>
+
+        <button type="submit" id="btnEnviarFormulario">Enviar Registro</button>
+        <p id="statusMensaje"></p>
+    </form>
+
+    <script src="script.js"></script>
+</body>
+</html>
