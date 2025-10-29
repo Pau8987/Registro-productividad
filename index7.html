@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Registro de Productividad</title>
+  
+  <meta name="theme-color" content="#ffffff" />
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+  <link rel="icon" href="icons/icon-192x192.png" type="image/png" sizes="192x192">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ... (Todo el CSS idéntico al anterior) ... */
+    :root {
+      --bg: #f4f6fa;
+      --panel: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --border: #d1d5db;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --accent-light: #eff6ff;
+      --danger: #dc2626;
+      --danger-hover: #b91c1c;
+      --danger-light: #fee2e2;
+      --ring: rgba(37, 99, 235, .25);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0f172a;
+        --panel: #1e293b;
+        --text: #f1f5f9;
+        --muted: #94a3b8;
+        --border: #334155;
+        --accent: #3b82f6;
+        --accent-hover: #60a5fa;
+        --accent-light: #1e293b;
+        --danger: #f87171;
+        --danger-hover: #ef4444;
+        --danger-light: #3f1212;
+        --ring: rgba(59, 130, 246, .25);
+      }
+      
+      input[type="time"]::-webkit-calendar-picker-indicator {
+        filter: invert(1);
+      }
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      -webkit-text-size-adjust: 100%;
+    }
+    
+    .container {
+      max-width: 1024px;
+      margin: 32px auto;
+      padding: 24px;
+    }
+    
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+    }
+    
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    
+    p.desc {
+      margin-bottom: 24px;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+    
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 20px;
+    }
+    
+    label {
+      display: block;
+      font-size: 0.875rem;
+      color: var(--muted);
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    input[type="time"],
+    input[type="number"],
+    select,
+    textarea {
+      width: 100%;
+      height: 44px; 
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--panel);
+      color: var(--text);
+      outline: none;
+      transition: box-shadow .2s, border-color .2s;
+      font-size: 0.95rem;
+    }
+    
+    @media (max-width: 720px) {
+      input[type="text"],
+      input[type="date"],
+      input[type="time"],
+      input[type="number"],
+      select,
+      textarea {
+        font-size: 16px;
+      }
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px var(--ring);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      font-weight: 600;
+      letter-spacing: .2px;
+      transition: all .2s;
+      font-size: 0.9rem;
+      height: 44px;
+    }
+    
+    .btn:disabled {
+      background-color: var(--muted);
+      color: var(--panel);
+      cursor: not-allowed;
+      filter: none;
+    }
+
+    .btn:hover {
+      filter: brightness(1.1);
+    }
+    
+    .btn-primary {
+      background: var(--accent);
+      color: #ffffff;
+      border: none;
+    }
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      filter: none;
+    }
+
+    .btn-secondary {
+      background: var(--accent-light);
+      color: var(--accent);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover {
+       filter: brightness(0.95);
+    }
+
+    .btn-danger {
+      background: var(--danger-light);
+      color: var(--danger);
+      border: none;
+    }
+    .btn-danger:hover {
+      background: var(--danger);
+      color: #fff;
+      filter: none;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--muted);
+      border-color: transparent;
+    }
+    .btn-ghost:hover {
+      background: var(--bg);
+      color: var(--text);
+      filter: none;
+    }
+
+    .rows-header, .rows-body {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    .rows-header th {
+      text-align: left;
+      font-weight: 500;
+      color: var(--muted);
+      padding: 8px 6px;
+      font-size: 0.875rem;
+    }
+    
+    .rows-body td {
+      padding: 6px;
+      vertical-align: top;
+    }
+    
+    .rows-wrap {
+      border: none;
+      border-radius: 0;
+      overflow: visible;
+      margin-top: 16px;
+    }
+    
+    .rows-body tr:nth-child(odd) td { background: transparent; }
+    .rows-body tr:hover td { background: transparent; }
+
+    .footer {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 24px;
+    }
+    
+    .note {
+      font-size: .875rem;
+      color: var(--muted);
+      margin-top: 16px;
+    }
+    
+    @media (max-width: 720px) {
+      body {
+        font-size: 16px;
+      }
+      
+      .container { margin: 0; padding: 16px; }
+      .card { padding: 20px; }
+      .grid { grid-template-columns: 1fr; }
+      .col { grid-column: span 1 !important; }
+      
+      .rows-header { display: none; }
+      
+      .rows-body tr {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        padding: 16px 0;
+        border-bottom: 1px solid var(--border);
+      }
+      
+      .rows-body td {
+        padding: 0;
+      }
+      
+      .rows-body td[data-label="Categoría"] { grid-column: 1 / -1; }
+      .rows-body td[data-label="Producto / Tarea"] { grid-column: 1 / -1; }
+      .rows-body td[data-label="Hora Inicio"] { grid-column: 1 / 2; }
+      .rows-body td[data-label="Hora Fin"] { grid-column: 2 / 3; }
+      .rows-body td[data-label="Cantidad"] { grid-column: 1 / 2; }
+      .rows-body td[data-label="Acción"] {
+        grid-column: 2 / 3;
+        align-self: end; 
+      }
+      
+      .rows-body td[data-label]::before {
+        content: attr(data-label) ": ";
+        display: block;
+        font-size: .8rem;
+        color: var(--muted);
+        margin-bottom: 4px;
+        font-weight: 500;
+      }
+      
+      .rows-body td[data-label="Acción"]::before {
+        display: none;
+      }
+      
+      .rows-body td[data-label="Acción"] .btn {
+        width: 100%;
+      }
+
+      .footer {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+    }
+  </style>
+  </head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1>Registro de Productividad</h1>
+      <p class="desc">Rellena tu jornada y añade tantas líneas de <em>Producto/Tarea</em> como necesites.</p>
+      
+      <form id="work-form">
+        <div class="grid" style="margin-bottom: 16px;">
+          <div class="col" style="grid-column: span 6;">
+            <label for="nombre">Nombre del trabajador</label>
+            <select id="nombre" name="nombre" required>
+              <option value="" disabled selected>Selecciona tu nombre...</option>
+              <option value="Ahmed">Ahmed</option>
+              <option value="Noemi">Noemi</option>
+              <option value="Manolo">Manolo</option>
+              <option value="Encarna">Encarna</option>
+              <option value="Javier">Javier</option>
+              <option value="Toni">Toni</option>
+              <option value="Yolanda">Yolanda</option>
+              <option value="José">José</option>
+              <option value="Agustín">Agustín</option>
+              <option value="Otro">Otro (especificar)</option>
+            </select>
+          </div>
+          <div class="col" style="grid-column: span 6; display: none;" id="nombre_otro_wrap">
+            <label for="nombre_otro">Nombre (Otro)</label>
+            <input id="nombre_otro" name="nombre_otro" type="text" placeholder="Escribe tu nombre" />
+          </div>
+          <div class="col" style="grid-column: span 6;">
+            <label for="fecha">Fecha</label>
+            <input id="fecha" name="fecha" type="date" required />
+          </div>
+        </div>
+
+        <h2 style="font-size:1.25rem; font-weight:600; margin: 24px 0 10px;">Productos / Tareas</h2>
+        <div class="rows-wrap">
+          <table class="rows-header" aria-hidden="true">
+            <thead>
+              <tr>
+                <th style="width: 25%; padding-left: 6px;">Categoría</th>
+                <th style="width: 35%; padding-left: 6px;">Producto / Tarea</th>
+                <th style="width: 12%; padding-left: 6px;">Hora Inicio</th>
+                <th style="width: 12%; padding-left: 6px;">Hora Fin</th>
+                <th style="width: 8%; padding-left: 6px;">Cant.</th>
+                <th style="width: 8%;"></th>
+              </tr>
+            </thead>
+          </table>
+          <table class="rows-body" id="rows-body">
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+        <div class="note">Usa <strong>+</strong> para añadir filas. En <em>Otros</em>, el segundo campo será de texto libre.</div>
+
+        <div class="footer">
+          <button type="button" class="btn btn-secondary" id="add-row">➕ Añadir fila</button>
+          <button type="button" class="btn btn-ghost" id="btn-reset">Limpiar</button>
+          <button type="submit" class="btn btn-primary">📤 Enviar</button>
+        </div>
+      </form>
+    </div>
+
+    <div id="output" class="card" style="margin-top:16px; display:none;"></div>
+  </div>
+
+  <script>
+    // === Configuración ===
+    const ENDPOINT_URL = 'https://script.google.com/macros/s/AKfycbzzy1jvCIkC_iZQKehDcU48-yKZ1w0RNBO5tZTigVZKAE5lLr-5FcWoboBsbZ2mNJQ/exec';
+
+    // === Catálogo (Actualizado) ===
+    const CATEGORIAS = [
+      "Ramo monoproducto", "Ramo", "Centro", "Planta", "Corona", "Árbol", 
+      "Maisons du monde", "Tareas auxiliares", "Otros",
+    ];
+    const OPCIONES = {
+      "Ramo monoproducto": ["Eucalipto Cinerea granate", "Eucalipto Cinerea verde", "Lagurus natural", "Lavanda", "Olivo", "Paniculata blanca"],
+      "Ramo": [
+        "Artalaz", "Bamburgh", "Beiral do Lima", "Bibury", "Castelo de Vide", "Castle Combe", "Cintães", "Copahue", 
+        "Cornero Riviera", "Cunda", "Dinan", "Duino", "Ericeira", "Espinho", "Figueira", "Gallipoli", "Golega", 
+        "Guimaraes", "Hvar", "Idanha-a-nova", "Junqueira", "Lamego", "Llanes", "Lucero", "Luss", "Nagol", "Oleiros", 
+        "Polignano-a-mare", "Pula", "Quiaios", "Ransol", "St. Ives", "Tabua", "Torreira", "Ucanha", "Zedes"
+      ],
+      "Planta": ["Palmera Robellini", "Planta cinerea verde", "Planta Erica", "Planta stuartiana otoñal"],
+      "Centro": [
+        "Agropoli", "Alayor", "Alberobello", "Antibes", "Artá", "Binibeca", "Bodrum", "Cadaqués", "Calobra", "Cassis", 
+        "Cefalú", "Cinque Terre", "Clovelly", "Collioure", "Corniglia", "Crail", "Cromer", "Filey", "Fossan", "Ischia", 
+        "Javea", "Kalkan", "Mahon", "Peñiscola", "Portocolom", "Positano", "Ravello", "Riomaggiore", "Rye", "Saint-Tropez", 
+        "Salcombe", "Sancti Petri", "Swanage", "Tabarca", "Vauban"
+      ],
+      "Corona": [
+        "Assos", "Adrasan", "Atrani", "Begur", "Bozburun", "Firostefani", "Fowey", "Foça", "Krioneri", "Kyrenia", 
+        "Molly", "Menton", "Nelly", "Padstow", "Pollença", "Taormina"
+      ],
+      "Árbol": [
+        "Árbol eucalipto cinerea granate M", "Árbol eucalipto cinerea granate S", "Árbol eucalipto cinerea otoñal M", 
+        "Árbol eucalipto cinerea otoñal S", "Árbol eucalipto cinerea verde M", "Árbol eucalipto cinerea verde S", 
+        "Árbol eucalipto parvifolia granate M", "Árbol eucalipto parvifolia granate S", "Árbol eucalipto parvifolia verde M", 
+        "Árbol eucalipto parvifolia verde S", "Árbol eucalipto populus granate M", "Árbol eucalipto populus verde M", 
+        "Árbol fagus otoñal M", "Árbol Olivo M"
+      ],
+      "Maisons du monde": [
+        "Pluma blanca", "Craspedia amarilla", "Lagurus blanco", "Lagurus azul claro", "Lagurus azul oscuro", "Ramo blanco", 
+        "Gavieira", "Conos", "Encajado", "Espuma"
+      ],
+      "Tareas auxiliares": [
+        "Troncos S", "Troncos M", "Encajado centros/plantas", "Encajado coronas", "Encajado ramos/monoprod.", 
+        "Encajado indiv. Centros/plantas", "Encajado indiv. Coronas", "Encajado indiv. Ramos/monoprod.", 
+        "Encajado árboles M", "Encajado árboles S", "Encajado rosas"
+      ],
+    };
+
+    // === Utilidades ===
+    const $ = (sel, ctx = document) => ctx.querySelector(sel);
+    const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
+
+    // Autorrelleno de fecha a hoy
+    const hoyISO = () => {
+      const d = new Date();
+      const tzOffset = d.getTimezoneOffset();
+      const local = new Date(d.getTime() - tzOffset * 60000);
+      return local.toISOString().slice(0, 10);
+    };
+    
+    // Crear select de categorías
+    function createCategorySelect() {
+      const sel = document.createElement('select');
+      sel.name = 'categoria';
+      sel.required = true;
+      const defaultCat = "Ramo monoproducto";
+      let hasDefault = false;
+      for (const c of CATEGORIAS) {
+        const opt = document.createElement('option');
+        opt.value = c; opt.textContent = c; sel.appendChild(opt);
+        if (c === defaultCat) hasDefault = true;
+      }
+      sel.value = hasDefault ? defaultCat : CATEGORIAS[0];
+      return sel;
+    }
+
+    // Crear campo de producto con datalist (buscador)
+    function createProductField(categoryValue) {
+      const fragment = document.createDocumentFragment();
+      if (categoryValue === 'Otros') {
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.name = 'producto';
+        input.placeholder = 'Describe el producto/tarea';
+        input.required = true;
+        fragment.appendChild(input);
+        return fragment;
+      }
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.name = 'producto';
+      input.required = true;
+      input.placeholder = 'Escribe para buscar...';
+      const datalistId = 'list-' + categoryValue.replace(/[^a-zA-Z0-9]/g, '-') + '-' + Date.now();
+      input.setAttribute('list', datalistId);
+      const datalist = document.createElement('datalist');
+      datalist.id = datalistId;
+      const items = OPCIONES[categoryValue] || [];
+      if (!items.length) {
+        input.placeholder = '— Sin opciones en catálogo —';
+        input.disabled = true;
+      } else {
+        for (const p of items) {
+          const opt = document.createElement('option');
+          opt.value = p; 
+          datalist.appendChild(opt);
+        }
+      }
+      fragment.appendChild(input);
+      fragment.appendChild(datalist);
+      return fragment;
+    }
+
+    // Crear una fila de productos/tareas
+    function createRow() {
+      const tr = document.createElement('tr');
+      
+      const tdCat = document.createElement('td');
+      tdCat.setAttribute('data-label', 'Categoría');
+      const catSelect = createCategorySelect();
+      tdCat.appendChild(catSelect);
+
+      const tdProd = document.createElement('td');
+      tdProd.setAttribute('data-label', 'Producto / Tarea');
+      let prodField = createProductField(catSelect.value);
+      tdProd.appendChild(prodField);
+
+      const tdHoraInicio = document.createElement('td');
+      tdHoraInicio.setAttribute('data-label', 'Hora Inicio');
+      const horaInicioInput = document.createElement('input');
+      horaInicioInput.type = 'time';
+      horaInicioInput.name = 'horaInicioRow'; 
+      horaInicioInput.required = true;
+      tdHoraInicio.appendChild(horaInicioInput);
+
+      const tdHoraFin = document.createElement('td');
+      tdHoraFin.setAttribute('data-label', 'Hora Fin');
+      const horaFinInput = document.createElement('input');
+      horaFinInput.type = 'time';
+      horaFinInput.name = 'horaFinRow'; 
+      horaFinInput.required = true;
+      tdHoraFin.appendChild(horaFinInput);
+
+      const tdQty = document.createElement('td');
+      tdQty.setAttribute('data-label', 'Cantidad');
+      const qty = document.createElement('input');
+      qty.type = 'number';
+      qty.name = 'cantidad';
+      qty.min = '1';
+      qty.step = '1';
+      qty.inputMode = 'numeric';
+      qty.placeholder = '1';
+      qty.value = '1';
+      tdQty.appendChild(qty);
+
+      const tdAct = document.createElement('td');
+      tdAct.setAttribute('data-label', 'Acción');
+      const del = document.createElement('button');
+      del.type = 'button'; 
+      del.className = 'btn btn-danger';
+      del.textContent = 'Eliminar';
+      del.addEventListener('click', () => tr.remove());
+      tdAct.appendChild(del);
+
+      catSelect.addEventListener('change', () => {
+        const newField = createProductField(catSelect.value);
+        tdProd.innerHTML = '';
+        tdProd.appendChild(newField);
+      });
+      
+      horaInicioInput.addEventListener('change', () => {
+        if (horaInicioInput.value) {
+          horaFinInput.min = horaInicioInput.value;
+          if (horaFinInput.value && horaFinInput.value < horaInicioInput.value) {
+            horaFinInput.value = horaInicioInput.value;
+          }
+        }
+      });
+
+      tr.appendChild(tdCat);
+      tr.appendChild(tdProd);
+      tr.appendChild(tdHoraInicio);
+      tr.appendChild(tdHoraFin);
+      tr.appendChild(tdQty);
+      tr.appendChild(tdAct);
+      return tr;
+    }
+
+    // Función para resetear el formulario
+    function resetForm() {
+      document.getElementById('work-form').reset(); 
+      $('#nombre_otro_wrap').style.display = 'none';
+      $('#nombre_otro').required = false;
+      $('#fecha').value = hoyISO();
+      const tbody = $('#tbody');
+      tbody.innerHTML = '';
+      tbody.appendChild(createRow());
+      $('#output').style.display = 'none';
+    }
+
+    // Render inicial
+    function init() {
+      $('#nombre').addEventListener('change', () => {
+        const wrap = $('#nombre_otro_wrap');
+        const input = $('#nombre_otro');
+        if ($('#nombre').value === 'Otro') {
+          wrap.style.display = 'block';
+          input.required = true;
+        } else {
+          wrap.style.display = 'none';
+          input.required = false;
+          input.value = '';
+        }
+      });
+      resetForm();
+
+      // --- CAMBIO: Registro del Service Worker actualizado ---
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js')
+          .then(registration => {
+            console.log('Service Worker registrado con éxito:', registration);
+            // Opcional: manejar actualizaciones
+            registration.onupdatefound = () => {
+              const installingWorker = registration.installing;
+              installingWorker.onstatechange = () => {
+                if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                  // Nueva actualización lista
+                  console.log('¡Nueva actualización detectada! Recargando...');
+                  // Podrías mostrar un aviso al usuario aquí
+                }
+              };
+            };
+          })
+          .catch(error => console.log('Error al registrar Service Worker:', error));
+      }
+      // --- FIN CAMBIO ---
+    }
+
+    // Recoger datos del formulario
+    function readFormData() {
+      const nombreSelect = $('#nombre').value;
+      let nombre = nombreSelect;
+      if (nombreSelect === 'Otro') {
+        nombre = $('#nombre_otro').value.trim();
+        if (!nombre) {
+          alert('Por favor, especifica tu nombre en el campo "Otro".');
+          return null;
+        }
+      }
+      if (nombreSelect === '') {
+          alert('Por favor, selecciona tu nombre.');
+          return null;
+      }
+
+      const fecha = $('#fecha').value;
+      const lineas = [];
+      let timesValid = true;
+
+      $$('#tbody tr').forEach(tr => {
+        const categoria = tr.querySelector('[name="categoria"]').value;
+        const productoEl = tr.querySelector('[name="producto"]'); // Corregido en la versión anterior
+        const producto = productoEl ? productoEl.value.trim() : '';
+        const cantidadEl = tr.querySelector('[name="cantidad"]');
+        const cantidad = cantidadEl && cantidadEl.value ? parseInt(cantidadEl.value, 10) : 1;
+        
+        const horaInicio = tr.querySelector('[name="horaInicioRow"]').value;
+        const horaFin = tr.querySelector('[name="horaFinRow"]').value;
+
+        if (!validateTimeRange(horaInicio, horaFin)) {
+            alert(`Error en la fila "${producto || 'nueva'}": La hora de fin debe ser posterior o igual a la hora de inicio.`);
+            timesValid = false;
+        }
+
+        if (categoria && producto) {
+          lineas.push({ categoria, producto, cantidad, horaInicio, horaFin });
+        }
+      });
+
+      if (!timesValid) return null;
+      return { nombre, fecha, lineas };
+    }
+    
+    // Validación de hora
+    function validateTimeRange(h1, h2) {
+      if (!h1 || !h2) return true;
+      return h1 <= h2;
+    }
+
+    // Validación de Solapamiento
+    function validateOverlaps(lineas) {
+      if (lineas.length < 2) {
+        return null;
+      }
+      const ranges = lineas.map(l => ({
+        start: l.horaInicio,
+        end: l.horaFin,
+        prod: l.producto
+      }));
+      ranges.sort((a, b) => a.start.localeCompare(b.start));
+
+      for (let i = 0; i < ranges.length - 1; i++) {
+        const current = ranges[i];
+        const next = ranges[i+1];
+        if (current.end > next.start) {
+          return '❌ Error: ¡Horas solapadas!\n\nLa tarea "' + current.prod + '" (termina a las ' + current.end + ') se solapa con la tarea "' + next.prod + '" (empieza a las ' + next.start + ').';
+        }
+      }
+      return null;
+    }
+
+    // Mostrar resumen
+    function renderOutput(data) {
+      const out = document.getElementById('output');
+      const linesHtml = data.lineas.map((l, i) => `
+        <li style="margin-bottom: 8px;">
+          <strong style="color:var(--accent);">${l.horaInicio || '??:??'} – ${l.horaFin || '??:??'}</strong><br>
+          <span style="color:var(--muted);">${l.categoria}</span> →
+          <strong>${l.producto}</strong> × <strong>${l.cantidad}</strong>
+        </li>
+      `).join('');
+      
+      // --- CAMBIO: Lógica del botón de borrado simplificada ---
+      // (La función de borrado se ha eliminado temporalmente para simplificar,
+      // ya que dependía del `rowId` que hemos quitado para esta corrección)
+      let deleteButtonHtml = '';
+      // --- FIN CAMBIO ---
+
+      out.innerHTML = `
+        <h3 style="margin-top:0; font-size: 1.25rem;">Resumen Enviado</h3>
+        <div class="grid" style="margin-bottom:8px;">
+          <div class="col" style="grid-column:span 6;"><strong>Trabajador:</strong> ${data.nombre || '—'}</div>
+          <div class="col" style="grid-column:span 6;"><strong>Fecha:</strong> ${data.fecha || '—'}</div>
+        </div>
+        <ul style="padding-left: 20px; margin:16px 0; list-style:circle;">${linesHtml || '<em>Sin líneas añadidas</em>'}</ul>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+          ${deleteButtonHtml}
+        </div>
+      `;
+      out.style.display = 'block';
+    }
+
+    // --- CAMBIO: sendToRemote ahora devuelve true/false ---
+    async function sendToRemote(data) {
+      if (!ENDPOINT_URL || ENDPOINT_URL.startsWith('PON_AQUI')) {
+        alert('Configura ENDPOINT_URL con la URL de tu servicio.');
+        return false; // Devuelve false en lugar de null
+      }
+      try {
+        const res = await fetch(ENDPOINT_URL, { 
+          method: 'POST', 
+          headers: { 'Content-Type': 'text/plain;charset=UTF-8' }, 
+          body: JSON.stringify(data),
+          // --- CAMBIO: Añadir un timeout para modo offline ---
+          // Si está offline, 'fetch' falla casi al instante.
+          // Esto es más un 'guard' por si acaso.
+          signal: AbortSignal.timeout(5000) // 5 segundos de timeout
+        });
+        
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const payload = await res.json().catch(() => ({}));
+        
+        if (payload && payload.ok) {
+          alert('✅ Enviado correctamente. ' + (payload.message || ''));
+          return true; // Devuelve true en éxito
+        } else {
+          const msg = (payload && (payload.error || payload.message)) || 'Respuesta no válida del servidor';
+          throw new Error(msg);
+        }
+      } catch (err) {
+        console.error(err);
+        // Si el error es por 'AbortError' (timeout) o 'Failed to fetch' (offline),
+        // no mostramos un alert feo, solo fallamos silenciosamente.
+        if (err.name === 'AbortError' || err.message.includes('Failed to fetch')) {
+          alert('❌ Error de red. No se pudo enviar.\n\nComprueba tu conexión a internet.');
+        } else {
+          alert('❌ Error al enviar: ' + err.message);
+        }
+        return false; // Devuelve false en error
+      }
+    }
+    // --- FIN CAMBIO ---
+
+    // (Función deleteFromRemote eliminada por ahora, ya que no tenemos rowId)
+
+    // === Eventos ===
+    
+    document.getElementById('add-row').addEventListener('click', () => {
+      const tbody = $('#tbody');
+      const lastRow = tbody.querySelector('tr:last-child');
+      let lastEndTime = '';
+
+      if (lastRow) {
+        const lastEndTimeInput = lastRow.querySelector('[name="horaFinRow"]');
+        if (lastEndTimeInput) {
+          lastEndTime = lastEndTimeInput.value;
+        }
+      }
+      
+      const newRow = createRow();
+      
+      if (lastEndTime) {
+        const newStartTimeInput = newRow.querySelector('[name="horaInicioRow"]');
+        const newEndTimeInput = newRow.querySelector('[name="horaFinRow"]');
+        
+        if (newStartTimeInput) {
+          newStartTimeInput.value = lastEndTime;
+        }
+        if (newEndTimeInput) {
+          newEndTimeInput.min = lastEndTime;
+        }
+      }
+      
+      tbody.appendChild(newRow);
+    });
+    
+    document.getElementById('btn-reset').addEventListener('click', resetForm);
+
+    // --- CAMBIO: Lógica de Submit reescrita ---
+    document.getElementById('work-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const submitButton = e.target.querySelector('[type="submit"]');
+      submitButton.disabled = true;
+      submitButton.innerHTML = 'Enviando...';
+      
+      const reenableButton = () => {
+        submitButton.disabled = false;
+        submitButton.innerHTML = '📤 Enviar';
+      };
+      
+      const data = readFormData();
+      if (!data) {
+        reenableButton();
+        return; 
+      }
+
+      if (data.lineas.length === 0) {
+        alert('❌ Error: Debes tener al menos una línea de producto.');
+        reenableButton();
+        return;
+      }
+
+      const overlapError = validateOverlaps(data.lineas);
+      if (overlapError) {
+        alert(overlapError);
+        reenableButton();
+        return;
+      }
+      
+      const sentStore = JSON.parse(localStorage.getItem('sentEntriesStore') || '{}');
+      const dateKey = data.fecha;
+      const sentOnThisDate = sentStore[dateKey] || [];
+      let hasDuplicate = false;
+      const newKeys = [];
+      
+      for (const linea of data.lineas) {
+        const key = [data.nombre, linea.categoria, linea.producto, linea.horaInicio, linea.horaFin].join('|');
+        if (sentOnThisDate.includes(key)) {
+          alert('❌ Error: ¡Entrada duplicada!\n\nLa tarea "' + linea.producto + '" de ' + linea.horaInicio + ' a ' + linea.horaFin + ' ya ha sido enviada hoy por ' + data.nombre + '.\n\nNo se enviará el parte. Por favor, elimina la fila duplicada.');
+          hasDuplicate = true;
+          break;
+        }
+        newKeys.push(key);
+      }
+      
+      if (hasDuplicate) {
+        reenableButton();
+        return;
+      }
+
+      try {
+        // 'sendToRemote' ahora devuelve true o false
+        const success = await sendToRemote(data);
+        
+        // Si el envío fue exitoso (success === true)
+        if (success) { 
+          renderOutput(data); // Renderiza el resumen
+          
+          // Guarda las claves en localStorage para evitar duplicados
+          sentStore[dateKey] = [...sentOnThisDate, ...newKeys];
+          localStorage.setItem('sentEntriesStore', JSON.stringify(sentStore));
+          
+          // Reinicia el formulario (las filas)
+          $('#tbody').innerHTML = '';
+          $('#tbody').appendChild(createRow());
+        }
+        // Si 'success' es false, el alert de error ya se mostró en sendToRemote
+        
+      } catch (err) {
+        console.error("Error en el proceso de envío:", err);
+      } finally {
+        // Pase lo que pase, reactiva el botón
+        reenableButton();
+      }
+    });
+    // --- FIN CAMBIO ---
+
+    // Init
+    init();
+  </script>
+</body>
+</html>
